@@ -41,7 +41,7 @@ export const config: PlatformConfig = {
   baseUrl: process.env.BASE_URL || (isProduction ? "https://aihosting.pjohnsonlabs.com" : `http://localhost:${process.env.PORT || 4020}`),
   network,
   usdcAsset,
-  payToAddress: process.env.X402_PAY_TO || "0x4020402040204020402040204020402040204020",
+  payToAddress: process.env.X402_PAY_TO || "0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A",
   facilitatorUrl: process.env.X402_FACILITATOR_URL || "https://x402.org/facilitator",
   storageDir: path.resolve(process.env.STORAGE_DIR || "./storage/deployments"),
   dbPath: path.resolve(process.env.DB_PATH || "./storage/host402.json"),
