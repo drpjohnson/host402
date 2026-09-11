@@ -61,8 +61,16 @@ app.use((req: Request, res: Response) => {
   return res.status(404).json({ error: "Not Found", path: req.path });
 });
 
-// Start Server only if executed directly
-const isMainModule = process.argv[1] && fileURLToPath(import.meta.url) === path.resolve(process.argv[1]);
+// Start Server if executed directly or in production/PM2
+const isMainModule =
+  process.env.NODE_ENV === "production" ||
+  process.env.PM2_HOME !== undefined ||
+  (process.argv[1] && (
+    process.argv[1].endsWith("index.js") ||
+    process.argv[1].endsWith("index.ts") ||
+    fileURLToPath(import.meta.url) === path.resolve(process.argv[1])
+  ));
+
 if (isMainModule) {
   const server = app.listen(config.port, () => {
     console.log(`

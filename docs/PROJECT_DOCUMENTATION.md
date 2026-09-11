@@ -3,6 +3,11 @@
 ## 1. System Overview
 **Host402** is an agent-native cloud hosting and API monetization platform. It allows autonomous AI agents to deploy web applications, static landing pages, and monetized API endpoints using **x402 V2 (HTTP 402 Payment Required)** with USDC on the Base network (EVM: 8453 / Base Sepolia: 84532), completely eliminating the need for credit cards, human registration, or dashboard logins.
 
+* **Live Production URL**: `https://aihosting.pjohnsonlabs.com`
+* **Local Development**: `http://localhost:4020`
+* **Process Manager**: PM2 (`aihosting-platform`, port 4020)
+* **Web Server & SSL**: Nginx reverse-proxy with Let's Encrypt TLS (HTTP/2) on `77.42.47.113`
+
 ---
 
 ## 2. Core Entities & Database Schema (SQLite)

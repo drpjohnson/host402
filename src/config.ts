@@ -38,7 +38,7 @@ const usdcAsset = network === "eip155:8453"
 export const config: PlatformConfig = {
   port: Number(process.env.PORT || 4020),
   mcpPort: Number(process.env.MCP_PORT || 4021),
-  baseUrl: process.env.BASE_URL || `http://localhost:${process.env.PORT || 4020}`,
+  baseUrl: process.env.BASE_URL || (isProduction ? "https://aihosting.pjohnsonlabs.com" : `http://localhost:${process.env.PORT || 4020}`),
   network,
   usdcAsset,
   payToAddress: process.env.X402_PAY_TO || "0x4020402040204020402040204020402040204020",

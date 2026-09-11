@@ -8,8 +8,8 @@ description: Autonomous cloud hosting and API monetization for AI agents via x40
 Deploy websites, web apps, and monetized APIs programmatically using the open **x402 V2** payment protocol. Pay instantly via EVM wallet (USDC on Base) without accounts, dashboards, or credit cards.
 
 ## Base URL
-Default local endpoint: `http://localhost:4020`
-Production endpoint: `https://api.host402.live`
+Production live endpoint: `https://aihosting.pjohnsonlabs.com`
+Local endpoint: `http://localhost:4020`
 
 ## Capabilities & Workflows
 
