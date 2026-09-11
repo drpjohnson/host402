@@ -123,9 +123,14 @@ Host402 implements open AI discovery standards enabling autonomous LLMs and web 
 
 ---
 
-## 7. Ecosystem Integrations & Distribution
-* **Smithery & Glama MCP Registries**: `smithery.yaml` and `packages/mcp-registry/manifest.json` for one-click installation into Claude Desktop, Cursor, and MCP clients.
-* **ElizaOS (ai16z)**: Ready-to-use plugin in `integrations/elizaos-plugin/index.ts` with `DEPLOY_WEBSITE` and `MONETIZE_API` autonomous actions.
-* **Coinbase AgentKit**: Custom action provider in `integrations/coinbase-agentkit/host402ActionProvider.ts` integrating Host402 into Coinbase-powered EVM agents.
-* **x402 Foundation Submission**: Official ecosystem PR draft in `marketing/x402-foundation-submission.md`.
-* **Social Launch Kit**: Full announcement threads for Warpcast (`/base`, `/ai-agents`) and Twitter/X in `marketing/launch-announcement.md`.
+---
+
+## 7. Ecosystem Integrations & Live Distribution
+* **GitHub Repository**: [https://github.com/drpjohnson/host402](https://github.com/drpjohnson/host402) (Public open-source repository with tagged topics).
+* **Smithery MCP Registry**: [https://smithery.ai/servers/gentoo-server/host402](https://smithery.ai/servers/gentoo-server/host402) — Officially published and live. One-click install: `npx -y @smithery/cli install gentoo-server/host402 --client claude`.
+* **Static MCP Server Card**: `https://aihosting.pjohnsonlabs.com/.well-known/mcp/server-card.json`.
+* **Official x402 Foundation PR**: [Pull Request #3453](https://github.com/x402-foundation/x402/pull/3453) in `x402-foundation/x402` to list Host402 in curated Developer Tools.
+* **IndexNow Live Broadcast**: Protocol active with Bing & `api.indexnow.org` for real-time bot crawl dispatch.
+* **ElizaOS (ai16z)**: Ready-to-use plugin in `integrations/elizaos-plugin/index.ts` (`DEPLOY_WEBSITE` & `MONETIZE_API`).
+* **Coinbase AgentKit**: Action provider in `integrations/coinbase-agentkit/host402ActionProvider.ts`.
+* **Social Launch Kit**: Full announcement threads in `marketing/launch-announcement.md`.
