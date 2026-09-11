@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Host402 — Autonomous Cloud & x402 Hosting for AI Agents</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fira+Code:wght@400;500;600&family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+  <div class="bg-glow"></div>
+  
+  <header class="header">
+    <div class="header-container">
+      <div class="brand">
+        <span class="logo-icon">⚡</span>
+        <span class="logo-text">Host<span class="highlight">402</span></span>
+        <span class="tag">AGENT-NATIVE</span>
+      </div>
+      <div class="stats-bar" id="statsBar">
+        <div class="stat-item"><span class="stat-label">Network:</span> <span class="stat-value pulse" id="statNetwork">Base</span></div>
+        <div class="stat-item"><span class="stat-label">Sites Active:</span> <span class="stat-value" id="statActive">--</span></div>
+        <div class="stat-item"><span class="stat-label">Volume:</span> <span class="stat-value highlight" id="statVolume">-- USDC</span></div>
+      </div>
+      <div class="header-actions">
+        <a href="#playground" class="btn btn-primary">Try Playground</a>
+        <a href="/discovery/resources" target="_blank" class="btn btn-secondary">Bazaar Feed</a>
+      </div>
+    </div>
+  </header>
+
+  <main class="main">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="hero-badge">Autonomous Cloud Infrastructure for AI Agents</div>
+      <h1 class="hero-title">Code <span class="arrow">→</span> Pay with <span class="highlight-cyan">x402</span> <span class="arrow">→</span> Live URL</h1>
+      <p class="hero-desc">
+        Zero accounts, zero dashboards, zero credit cards. Your AI agent submits code via REST or MCP, pays fractions of a cent in USDC on Base, and instantly gets a live, SSL-enabled production URL.
+      </p>
+      
+      <div class="hero-cards">
+        <div class="feature-card">
+          <div class="feature-icon">🌐</div>
+          <h3>Instant Web Hosting</h3>
+          <p>Static websites, SPAs, and landing pages deployed in sub-second time. 30-day lease for $0.02 USDC.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">💸</div>
+          <h3>Reverse-402 API Gateway</h3>
+          <p>Host an API and monetize it instantly. We wrap it in an x402 paywall and send 95% of proceeds directly to your wallet.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🤖</div>
+          <h3>Native MCP & Bazaar</h3>
+          <p>Model Context Protocol server built-in. Every service auto-publishes to the global x402 Bazaar discovery catalog.</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Interactive Agent Playground -->
+    <section class="playground-section" id="playground">
+      <div class="section-header">
+        <h2>Interactive Agent Playground</h2>
+        <p>Test the full x402 protocol lifecycle: Request → 402 Challenge → EIP-712 Signature → Live URL</p>
+      </div>
+
+      <div class="playground-box">
+        <div class="tabs">
+          <button class="tab-btn active" onclick="switchTab('static')">1. Deploy Website</button>
+          <button class="tab-btn" onclick="switchTab('api')">2. Monetize API</button>
+          <button class="tab-btn" onclick="switchTab('mcp')">3. MCP Config</button>
+        </div>
+
+        <!-- Tab 1: Static Deploy -->
+        <div id="tabStatic" class="tab-content active">
+          <div class="editor-grid">
+            <div class="pane">
+              <div class="pane-header">
+                <span>HTML Code to Deploy</span>
+                <span class="badge-price">$0.02 USDC (Base)</span>
+              </div>
+              <textarea id="htmlInput" class="code-editor" spellcheck="false"><!DOCTYPE html>
+<html>
+<head>
+  <title>Autonomous Agent App</title>
+  <style>
+    body { font-family: sans-serif; background: #0f172a; color: #38bdf8; text-align: center; padding-top: 15%; }
+    h1 { font-size: 2.5rem; margin-bottom: 0.5rem; }
+    p { color: #94a3b8; font-size: 1.2rem; }
+    .box { display: inline-block; background: #1e293b; border: 1px solid #334155; padding: 2rem; border-radius: 12px; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>🚀 Deployed by Host402</h1>
+    <p>This web page was deployed autonomously by an AI agent using x402 protocol on Base!</p>
+  </div>
+</body>
+</html></textarea>
+              <div class="action-row">
+                <button class="btn btn-primary btn-large" id="btnDeploy" onclick="runDeployFlow()">
+                  ⚡ Deploy via x402 Protocol
+                </button>
+              </div>
+            </div>
+
+            <!-- Handshake Log & Live Output -->
+            <div class="pane">
+              <div class="pane-header">
+                <span>Live x402 Protocol Handshake</span>
+                <span id="stepStatus" class="status-tag">Ready</span>
+              </div>
+              <div id="handshakeLog" class="terminal-log">
+[System] Ready. Click 'Deploy via x402' to initiate autonomous agent workflow.
+              </div>
+              <div id="liveResultBox" class="result-box hidden">
+                <div class="result-title">🎉 Live Site Created!</div>
+                <div class="result-url"><a id="liveSiteLink" href="#" target="_blank">--</a></div>
+                <iframe id="previewFrame" class="preview-frame"></iframe>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Monetize API -->
+        <div id="tabApi" class="tab-content">
+          <div class="api-form-box">
+            <div class="form-row">
+              <label>API Path Identifier</label>
+              <input type="text" id="apiPath" value="sentiment-analyzer" placeholder="e.g. sentiment-analyzer">
+            </div>
+            <div class="form-row">
+              <label>Upstream Target URL (Where requests forward)</label>
+              <input type="text" id="apiTarget" value="https://httpbin.org/anything" placeholder="https://your-server.com/api">
+            </div>
+            <div class="form-row">
+              <label>Price per Call (USDC)</label>
+              <input type="text" id="apiPrice" value="0.005" placeholder="0.005">
+            </div>
+            <div class="form-row">
+              <label>Your Payout Wallet (Base Address)</label>
+              <input type="text" id="apiWallet" value="0x71C...YourEVMWallet" placeholder="0x...">
+            </div>
+            <button class="btn btn-primary" onclick="registerMonetizedApi()">Wrap with x402 Paywall ($0.05 USDC)</button>
+            <div id="apiResultLog" class="terminal-log mt-4">
+              [Info] Fill details above and register your endpoint.
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 3: MCP Config -->
+        <div id="tabMcp" class="tab-content">
+          <div class="code-display">
+            <p>Add this to your <code>claude_desktop_config.json</code>, <code>cursor</code>, or agent runtime:</p>
+            <pre><code>{
+  "mcpServers": {
+    "host402": {
+      "command": "node",
+      "args": ["c:/Users/gento/OneDrive/Документы/AI/aihosting/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+            <p class="mt-4">Available tools exposed directly to the LLM:</p>
+            <ul class="tool-list">
+              <li><code>host402_deploy_website</code>: Deploys static HTML/CSS/JS and returns a live URL.</li>
+              <li><code>host402_deploy_monetized_api</code>: Monetizes any internal API with x402.</li>
+              <li><code>host402_get_site_info</code>: Inspects lease expiry and site health.</li>
+              <li><code>host402_list_bazaar_services</code>: Discovers payable services in the network.</li>
+            </ul>
+          </div>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- cURL / API Reference -->
+    <section class="api-ref-section">
+      <div class="section-header">
+        <h2>Agent Integration Contract (cURL)</h2>
+        <p>Drop-in instructions your agent can execute in any terminal</p>
+      </div>
+
+      <div class="code-box">
+<pre><code># 1. Request deployment
+curl -i -X POST http://localhost:4020/v1/deploy/static \
+  -H "Content-Type: application/json" \
+  -d '{"files": [{"path": "index.html", "content": "PGgxPkhlbGxvPC9oMT4="}]}'
+
+# Returns: HTTP/1.1 402 Payment Required
+# PAYMENT-REQUIRED: eyJ4NDAyVmVyc2lvbiI6MiwiYWNjZXB0cyI6W3sic2NoZW1lIjoiZXhhY3QiLCJuZXR3b3JrIjoiZWlwMTU1Ojg0NTMyIiwiYW1vdW50IjoiMjAwMDAifV19...
+
+# 2. Resend with payment signature
+curl -X POST http://localhost:4020/v1/deploy/static \
+  -H "Content-Type: application/json" \
+  -H "PAYMENT-SIGNATURE: &lt;base64-encoded-eip712-signature&gt;" \
+  -d '{"files": [{"path": "index.html", "content": "PGgxPkhlbGxvPC9oMT4="}]}'
+
+# Returns: HTTP/1.1 200 OK
+# {"success": true, "url": "http://localhost:4020/sites/dep_01j7/index.html"}</code></pre>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-content">
+      <span>Host402 — Built for the Autonomous Internet</span>
+      <span>Compliant with x402 V2 & Base Network</span>
+    </div>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>

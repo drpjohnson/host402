@@ -1,0 +1,48 @@
+{
+  "name": "host402",
+  "version": "1.0.0",
+  "type": "module",
+  "description": "Agent-native x402 hosting and API monetization platform",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx watch src/index.ts",
+    "mcp": "node dist/mcp/server.js",
+    "test": "node dist/tests/e2e-test.js"
+  },
+  "keywords": [
+    "x402",
+    "ai-agents",
+    "hosting",
+    "crypto",
+    "base",
+    "usdc",
+    "mcp"
+  ],
+  "author": "Host402 Team",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.6.1",
+    "@x402/core": "^2.25.0",
+    "@x402/evm": "^2.25.0",
+    "@x402/express": "^2.25.0",
+    "@x402/extensions": "^2.25.0",
+    "@x402/mcp": "^2.25.0",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
+    "mime-types": "^2.1.35",
+    "multer": "^1.4.5-lts.1",
+    "viem": "^2.23.0"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/mime-types": "^2.1.4",
+    "@types/multer": "^1.4.12",
+    "@types/node": "^22.13.9",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

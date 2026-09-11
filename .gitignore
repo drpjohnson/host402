@@ -1,0 +1,8 @@
+node_modules
+dist
+storage/deployments
+storage/host402.json*
+.env
+*.log
+npm-debug.log*
+.DS_Store
