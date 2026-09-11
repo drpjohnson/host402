@@ -112,3 +112,20 @@ graph TD
 * **Network Isolation**: Egress outbound traffic from hosted dynamic code is restricted; port 25 (SMTP) and crypto-mining IPs are strictly firewalled.
 * **Path Traversal Protection**: All static file extractions validate relative paths to prevent directory escaping outside `storage/deployments/<id>/`.
 * **Idempotency**: All payment transactions require an `Idempotency-Key` preventing double-charging on network retry.
+
+---
+
+## 6. Machine-Readable Agent Discovery & Standards
+Host402 implements open AI discovery standards enabling autonomous LLMs and web agents to find, understand, and use the platform automatically:
+* **`/llms.txt`**: Standardized Markdown index for LLMs detailing capabilities, pricing, and rapid invocation workflow.
+* **`/llms-full.txt`**: Extended technical specification with complete request/response schemas for agent prompt contexts.
+* **`/.well-known/agent.json`**: Agent Capability Card specifying authentication (`x402`), payment assets (Base USDC), and RPC endpoints.
+
+---
+
+## 7. Ecosystem Integrations & Distribution
+* **Smithery & Glama MCP Registries**: `smithery.yaml` and `packages/mcp-registry/manifest.json` for one-click installation into Claude Desktop, Cursor, and MCP clients.
+* **ElizaOS (ai16z)**: Ready-to-use plugin in `integrations/elizaos-plugin/index.ts` with `DEPLOY_WEBSITE` and `MONETIZE_API` autonomous actions.
+* **Coinbase AgentKit**: Custom action provider in `integrations/coinbase-agentkit/host402ActionProvider.ts` integrating Host402 into Coinbase-powered EVM agents.
+* **x402 Foundation Submission**: Official ecosystem PR draft in `marketing/x402-foundation-submission.md`.
+* **Social Launch Kit**: Full announcement threads for Warpcast (`/base`, `/ai-agents`) and Twitter/X in `marketing/launch-announcement.md`.
