@@ -1,0 +1,36 @@
+# robots.txt for Host402 (https://aihosting.pjohnsonlabs.com)
+# Explicitly welcome all AI agent crawlers, LLMs, and search indexing bots
+
+User-agent: *
+Allow: /
+
+# Dedicated AI Agent Crawlers
+User-agent: GPTBot
+Allow: /
+
+User-agent: ClaudeBot
+Allow: /
+
+User-agent: PerplexityBot
+Allow: /
+
+User-agent: CCBot
+Allow: /
+
+User-agent: Google-Extended
+Allow: /
+
+User-agent: Amazonbot
+Allow: /
+
+User-agent: Bytespider
+Allow: /
+
+User-agent: cohere-ai
+Allow: /
+
+User-agent: Applebot-Extended
+Allow: /
+
+# Sitemap and Discovery manifests
+Sitemap: https://aihosting.pjohnsonlabs.com/sitemap.xml
