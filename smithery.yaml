@@ -1,0 +1,21 @@
+# Smithery MCP Server Configuration
+# Specification: https://smithery.ai/docs/config
+name: host402
+version: 1.0.0
+description: Agent-native autonomous cloud hosting and API monetization platform with x402 micropayments (USDC on Base).
+startCommand:
+  type: stdio
+  configSchema:
+    type: object
+    properties:
+      privateKey:
+        type: string
+        description: Hex-encoded EVM private key for paying for hosting in USDC on Base.
+      serverUrl:
+        type: string
+        default: https://aihosting.pjohnsonlabs.com
+        description: Host402 platform endpoint URL
+  commandLine:
+    command: node
+    args:
+      - dist/mcp/server.js

@@ -1,0 +1,120 @@
+# Host402 Full Technical Context & API Contract for LLMs
+
+## Overview
+Host402 is an infrastructure platform designed specifically for machine-to-machine commerce and autonomous AI agents. Unlike legacy cloud hosts (AWS, Vercel, Cloudflare, Netlify) that mandate human identity verification, interactive CAPTCHAs, and credit card billing profiles, Host402 exposes compute, web hosting, and API monetization as frictionless, pay-per-use capabilities governed by the open HTTP standard x402 V2.
+
+## Payment Standard & Mechanism
+- Protocol: x402 V2
+- Scheme: exact (EVM EIP-712 / Permit2)
+- Blockchain: Base Mainnet (`eip155:8453`)
+- Payment Currency: USD Coin (USDC)
+- Token Contract Address: `0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`
+- Platform Receiver Wallet: `0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A`
+- Facilitator URL: `https://x402.org/facilitator`
+
+## Endpoint Specifications
+
+### 1. Static Web Deployment (`POST /v1/deploy/static`)
+Accepts an array of files or an inline HTML string.
+
+#### Request Headers:
+- `Content-Type`: `application/json`
+- `Idempotency-Key`: Optional string (recommended for safe retries)
+- `PAYMENT-SIGNATURE`: Base64-encoded x402 payment payload (omit on initial request to receive 402 challenge)
+
+#### Request Body:
+```json
+{
+  "files": [
+    {
+      "path": "index.html",
+      "content": "<h1>Hello from Agent</h1><p>Running on Host402</p>",
+      "encoding": "utf-8"
+    },
+    {
+      "path": "styles.css",
+      "content": "body { background: #000; color: #00f0ff; }",
+      "encoding": "utf-8"
+    }
+  ],
+  "ttl_days": 30
+}
+```
+
+#### Initial Response (402 Payment Required):
+```http
+HTTP/1.1 402 Payment Required
+PAYMENT-REQUIRED: <base64-encoded-payment-requirements>
+Content-Type: application/json
+
+{
+  "error": "Payment Required",
+  "x402": {
+    "x402Version": 2,
+    "accepts": [
+      {
+        "scheme": "exact",
+        "network": "eip155:8453",
+        "payTo": "0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A",
+        "amount": "20000",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "maxTimeoutSeconds": 300,
+        "extra": {
+          "name": "USD Coin",
+          "version": "2",
+          "formattedPrice": "$0.0200 USDC"
+        }
+      }
+    ],
+    "resource": "https://aihosting.pjohnsonlabs.com/v1/deploy/static",
+    "description": "Host402 static website deployment (30 days lease)"
+  }
+}
+```
+
+#### Final Response (200 OK):
+```json
+{
+  "success": true,
+  "id": "dep_01j7abc...",
+  "url": "https://aihosting.pjohnsonlabs.com/sites/dep_01j7abc.../index.html",
+  "entrypoint": "index.html",
+  "fileCount": 2,
+  "sizeBytes": 1024,
+  "createdAt": "2026-09-12T02:00:00.000Z",
+  "expiresAt": "2026-10-12T02:00:00.000Z",
+  "payment": {
+    "txHash": "0x...",
+    "amountUSDC": 0.02,
+    "payer": "0xAgentWallet..."
+  }
+}
+```
+
+### 2. Reverse-402 API Gateway (`POST /v1/deploy/api`)
+Allows an agent to deploy an API and monetize it without building custom billing infrastructure.
+
+#### Request Body:
+```json
+{
+  "path": "my-agent-tool",
+  "target_url": "https://internal-worker.example.com/api",
+  "price_per_call": "0.005",
+  "owner_wallet": "0xAgentCreatorWallet..."
+}
+```
+
+When other agents invoke `https://aihosting.pjohnsonlabs.com/gateway/my-agent-tool`:
+1. The gateway returns `402 Payment Required` demanding $0.005 USDC.
+2. The caller pays via x402.
+3. 95% of proceeds ($0.00475) are credited to `owner_wallet`.
+4. 5% ($0.00025) is retained as platform fee.
+5. The request is proxied to `target_url` and the response streamed back to the caller.
+
+### 3. Model Context Protocol (MCP) Tools
+Connect via stdio command: `node <path>/dist/mcp/server.js`
+Tools available:
+- `host402_deploy_website`: `files: [{ path, content }]`, `ttl_days`, `payment_signature`
+- `host402_deploy_monetized_api`: `path`, `target_url`, `price_per_call`, `owner_wallet`, `payment_signature`
+- `host402_get_site_info`: `deployment_id`
+- `host402_list_bazaar_services`: `query`

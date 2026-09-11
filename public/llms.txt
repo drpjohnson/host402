@@ -1,0 +1,35 @@
+# Host402 — Autonomous Cloud Hosting for AI Agents
+
+> Host402 is an agent-native cloud hosting and API monetization platform operated over HTTP using the open x402 V2 payment protocol (USDC on Base). It enables autonomous agents to deploy websites, single-page applications, and monetized API endpoints programmatically without accounts, dashboards, or credit cards.
+
+## Quick Reference
+- Platform Base URL: https://aihosting.pjohnsonlabs.com
+- Supported Network: Base Mainnet (`eip155:8453`)
+- Payment Asset: Circle USDC (`0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913`)
+- Protocol: x402 V2 (HTTP 402 Payment Required)
+- Pricing:
+  - Static Web Hosting (30 days): $0.02 USDC (`20000` atomic units)
+  - API Registration: $0.05 USDC (`50000` atomic units)
+  - Lease Extension (30 days): $0.01 USDC (`10000` atomic units)
+
+## Core Endpoints
+- `POST /v1/deploy/static`: Upload files to deploy an instant website or web app.
+- `POST /v1/deploy/api`: Register a monetized API wrapped with an automatic x402 paywall.
+- `GET /sites/:id/`: Access hosted static websites and web apps.
+- `ALL /gateway/:path`: Access monetized APIs (caller is challenged with x402).
+- `GET /discovery/resources`: Machine-readable x402 Bazaar discovery catalog.
+- `GET /api/stats`: Real-time platform usage metrics and network status.
+- `GET /health`: Platform health check.
+
+## Agent Workflow (Deploying a Website)
+1. Send files in JSON format to `POST https://aihosting.pjohnsonlabs.com/v1/deploy/static`.
+2. Intercept `402 Payment Required` response containing `PAYMENT-REQUIRED` header.
+3. Sign the payment requirement using your EVM wallet private key on Base.
+4. Resend request with header `PAYMENT-SIGNATURE: <base64-payment-payload>`.
+5. Receive `200 OK` with public URL `https://aihosting.pjohnsonlabs.com/sites/<deployment_id>/index.html`.
+
+## Machine-Readable Resources
+- Extended LLM Context: https://aihosting.pjohnsonlabs.com/llms-full.txt
+- Agent Capability Card: https://aihosting.pjohnsonlabs.com/.well-known/agent.json
+- MCP Server Entry: https://aihosting.pjohnsonlabs.com/mcp
+- x402 Bazaar Catalog: https://aihosting.pjohnsonlabs.com/discovery/resources

@@ -1,0 +1,51 @@
+{
+  "$schema": "https://json.schemastore.org/agent-manifest.json",
+  "name": "Host402",
+  "version": "1.0.0",
+  "description": "Agent-native autonomous cloud hosting and API monetization platform with x402 protocol payments in USDC on Base.",
+  "homepage": "https://aihosting.pjohnsonlabs.com",
+  "provider": {
+    "name": "Host402",
+    "url": "https://aihosting.pjohnsonlabs.com"
+  },
+  "capabilities": {
+    "web_hosting": {
+      "supported_runtimes": ["static", "spa"],
+      "pricing": {
+        "network": "eip155:8453",
+        "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
+        "amount": "20000",
+        "formatted": "$0.02 USDC",
+        "period": "30 days"
+      }
+    },
+    "api_monetization": {
+      "type": "reverse_402_gateway",
+      "platform_fee_percent": 5,
+      "supported_networks": ["eip155:8453", "eip155:84532"]
+    },
+    "mcp_server": {
+      "version": "1.0.0",
+      "transport": "stdio",
+      "tools": [
+        "host402_deploy_website",
+        "host402_deploy_monetized_api",
+        "host402_get_site_info",
+        "host402_list_bazaar_services"
+      ]
+    }
+  },
+  "authentication": {
+    "scheme": "x402",
+    "version": 2,
+    "networks": ["eip155:8453"],
+    "payTo": "0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A"
+  },
+  "endpoints": {
+    "deploy_static": "https://aihosting.pjohnsonlabs.com/v1/deploy/static",
+    "deploy_api": "https://aihosting.pjohnsonlabs.com/v1/deploy/api",
+    "bazaar_discovery": "https://aihosting.pjohnsonlabs.com/discovery/resources",
+    "stats": "https://aihosting.pjohnsonlabs.com/api/stats",
+    "health": "https://aihosting.pjohnsonlabs.com/health"
+  }
+}

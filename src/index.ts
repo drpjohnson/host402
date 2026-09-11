@@ -21,6 +21,23 @@ app.use(express.urlencoded({ extended: true, limit: "25mb" }));
 
 // Static frontend dashboard & playground
 const publicDir = path.resolve(__dirname, "../public");
+
+// AI Agent & LLM Discovery Manifests
+app.get("/llms.txt", (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.sendFile(path.join(publicDir, "llms.txt"));
+});
+
+app.get("/llms-full.txt", (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "text/plain; charset=utf-8");
+  res.sendFile(path.join(publicDir, "llms-full.txt"));
+});
+
+app.get("/.well-known/agent.json", (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/json; charset=utf-8");
+  res.sendFile(path.join(publicDir, ".well-known/agent.json"));
+});
+
 app.use(express.static(publicDir));
 
 // Public Platform Statistics & Directory API

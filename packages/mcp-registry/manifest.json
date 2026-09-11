@@ -1,0 +1,55 @@
+{
+  "$schema": "https://glama.ai/mcp/schemas/server-manifest.json",
+  "name": "host402",
+  "displayName": "Host402",
+  "description": "Agent-native autonomous cloud hosting and API monetization platform with x402 protocol payments in USDC on Base.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/host402/host402"
+  },
+  "homepage": "https://aihosting.pjohnsonlabs.com",
+  "keywords": [
+    "x402",
+    "hosting",
+    "base",
+    "usdc",
+    "ai-agents",
+    "paywall",
+    "bazaar",
+    "crypto",
+    "mcp-server"
+  ],
+  "server": {
+    "type": "stdio",
+    "entrypoint": "dist/mcp/server.js",
+    "runtime": "node",
+    "tools": [
+      {
+        "name": "host402_deploy_website",
+        "description": "Deploys a static website, landing page, or web application to the web with an instant public URL. Uses x402 protocol ($0.02 USDC on Base)."
+      },
+      {
+        "name": "host402_deploy_monetized_api",
+        "description": "Hosts and wraps an agent API with an x402 paywall. Caller agents pay USDC per call, and 95% is forwarded directly to your wallet."
+      },
+      {
+        "name": "host402_get_site_info",
+        "description": "Inspect the status, live URL, and expiration date of a deployed website."
+      },
+      {
+        "name": "host402_list_bazaar_services",
+        "description": "Search discoverable x402 APIs and tools registered on the Host402 network."
+      }
+    ]
+  },
+  "environmentVariables": {
+    "EVM_PRIVATE_KEY": {
+      "description": "Hex-encoded EVM private key with USDC on Base to sign x402 micropayments",
+      "required": false
+    },
+    "HOST402_BASE_URL": {
+      "description": "Host402 platform URL",
+      "default": "https://aihosting.pjohnsonlabs.com"
+    }
+  }
+}
