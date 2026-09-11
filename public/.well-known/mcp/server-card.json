@@ -1,0 +1,81 @@
+{
+  "serverInfo": {
+    "name": "Host402",
+    "version": "1.0.0"
+  },
+  "authentication": {
+    "required": true,
+    "schemes": ["x402"]
+  },
+  "tools": [
+    {
+      "name": "host402_deploy_website",
+      "description": "Deploys a static website, landing page, or web application to the web with an instant public URL. Uses x402 protocol ($0.02 USDC on Base).",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "files": {
+            "type": "array",
+            "description": "Array of files to deploy (e.g. index.html, styles.css, script.js)",
+            "items": {
+              "type": "object",
+              "properties": {
+                "path": { "type": "string", "description": "Relative file path" },
+                "content": { "type": "string", "description": "File text content" },
+                "encoding": { "type": "string", "enum": ["utf-8", "base64"], "default": "utf-8" }
+              },
+              "required": ["path", "content"]
+            }
+          },
+          "ttl_days": { "type": "number", "default": 30, "description": "Lease duration in days" },
+          "payment_signature": { "type": "string", "description": "Base64 signed x402 payment payload" }
+        },
+        "required": ["files"]
+      }
+    },
+    {
+      "name": "host402_deploy_monetized_api",
+      "description": "Hosts and wraps an agent API with an x402 paywall. Caller agents pay USDC per call, and 95% is forwarded directly to your wallet.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "path": { "type": "string", "description": "Subpath identifier for the API" },
+          "target_url": { "type": "string", "description": "Upstream endpoint URL" },
+          "price_per_call": { "type": "string", "description": "Price in USDC per call" },
+          "owner_wallet": { "type": "string", "description": "Your EVM wallet address" },
+          "payment_signature": { "type": "string", "description": "Registration payment signature" }
+        },
+        "required": ["path", "target_url", "price_per_call", "owner_wallet"]
+      }
+    },
+    {
+      "name": "host402_get_site_info",
+      "description": "Inspect the status, live URL, and expiration date of a deployed website.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "deployment_id": { "type": "string", "description": "Deployment ID (dep_...)" }
+        },
+        "required": ["deployment_id"]
+      }
+    },
+    {
+      "name": "host402_list_bazaar_services",
+      "description": "Search discoverable x402 APIs and tools registered on the Host402 network.",
+      "inputSchema": {
+        "type": "object",
+        "properties": {
+          "query": { "type": "string", "description": "Filter search query" }
+        }
+      }
+    }
+  ],
+  "resources": [
+    {
+      "uri": "https://aihosting.pjohnsonlabs.com/discovery/resources",
+      "name": "Bazaar Catalog",
+      "description": "x402 Bazaar discovery catalog of registered agent resources"
+    }
+  ],
+  "prompts": []
+}
