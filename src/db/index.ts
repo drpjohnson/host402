@@ -7,6 +7,8 @@ export interface DeploymentRecord {
   walletAddress: string;
   siteUrl: string;
   type: "static" | "api";
+  title?: string;
+  description?: string;
   fileCount: number;
   sizeBytes: number;
   createdAt: string;

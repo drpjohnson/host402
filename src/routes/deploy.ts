@@ -88,6 +88,8 @@ deployRouter.post("/static", async (req: Request, res: Response) => {
       walletAddress: settlement.paymentRecord?.payerWallet || "0xAnonymousAgent",
       siteUrl,
       type: "static",
+      title: typeof req.body?.title === "string" ? req.body.title.slice(0, 100) : undefined,
+      description: typeof req.body?.description === "string" ? req.body.description.slice(0, 300) : undefined,
       fileCount: saveResult.fileCount,
       sizeBytes: saveResult.sizeBytes,
       createdAt: now.toISOString(),

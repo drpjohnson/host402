@@ -177,6 +177,75 @@ async function registerMonetizedApi() {
   }
 }
 
+function timeAgo(dateString) {
+  const diff = Date.now() - new Date(dateString).getTime();
+  const minutes = Math.floor(diff / 60000);
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  return `${Math.floor(hours / 24)}d ago`;
+}
+
+function escapeHtml(str) {
+  if (!str) return "";
+  return str.replace(/[&<>'"]/g, tag => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    "'": '&#39;',
+    '"': '&quot;'
+  }[tag] || tag));
+}
+
+async function loadShowcase() {
+  const container = document.getElementById('showcaseFeed');
+  if (!container) return;
+
+  try {
+    const res = await fetch('/api/showcase');
+    if (!res.ok) return;
+    const data = await res.json();
+    const items = data.items || [];
+
+    if (items.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">
+          No autonomous deployments found yet. Launch one via the playground below!
+        </div>`;
+      return;
+    }
+
+    container.innerHTML = items.map(item => `
+      <div class="showcase-card">
+        <div class="showcase-card-header">
+          <div>
+            <div class="showcase-title">${escapeHtml(item.title || item.id)}</div>
+            <span style="font-size: 0.75rem; color: #38bdf8; font-family: monospace;">${item.id}</span>
+          </div>
+          <span style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
+            $0.02 USDC
+          </span>
+        </div>
+        <div class="showcase-desc">${escapeHtml(item.description || "Autonomous web application")}</div>
+        <div class="showcase-footer">
+          <div class="showcase-meta">
+            <span>🔵 Base Mainnet</span>
+            <span>⏱️ ${timeAgo(item.createdAt)}</span>
+          </div>
+          <a href="${item.url}" target="_blank" class="btn-visit">
+            Visit Site ↗
+          </a>
+        </div>
+      </div>
+    `).join('');
+  } catch (err) {
+    console.warn("Failed to load showcase:", err);
+  }
+}
+
 // Initial load
 loadStats();
+loadShowcase();
 setInterval(loadStats, 10000);
+setInterval(loadShowcase, 15000);

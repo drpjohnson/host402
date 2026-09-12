@@ -9,7 +9,18 @@
     "start": "node dist/index.js",
     "dev": "tsx watch src/index.ts",
     "mcp": "node dist/mcp/server.js",
-    "test": "node dist/tests/e2e-test.js"
+    "test": "node dist/tests/e2e-test.js",
+    "showcase": "node dist/services/showcase-agent.js"
+  },
+  "bin": {
+    "host402": "./dist/mcp/server.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/drpjohnson/host402.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "keywords": [
     "x402",

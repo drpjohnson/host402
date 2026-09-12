@@ -38,6 +38,16 @@ app.get("/.well-known/agent.json", (req: Request, res: Response) => {
   res.sendFile(path.join(publicDir, ".well-known/agent.json"));
 });
 
+app.get("/feed.xml", (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/xml; charset=utf-8");
+  res.sendFile(path.join(publicDir, "feed.xml"));
+});
+
+app.get("/feed.json", (req: Request, res: Response) => {
+  res.setHeader("Content-Type", "application/feed+json; charset=utf-8");
+  res.sendFile(path.join(publicDir, "feed.json"));
+});
+
 app.use(express.static(publicDir));
 
 // Public Platform Statistics & Directory API
@@ -53,9 +63,23 @@ app.get("/api/stats", (req: Request, res: Response) => {
   });
 });
 
-app.get("/api/recent", (req: Request, res: Response) => {
-  const deployments = db.getAllDeployments({ status: "active" }).slice(0, 10);
-  res.json({ items: deployments });
+app.get(["/api/recent", "/api/showcase"], (req: Request, res: Response) => {
+  const deployments = db.getAllDeployments({ status: "active" }).slice(0, 15);
+  res.json({
+    success: true,
+    count: deployments.length,
+    items: deployments.map((d) => ({
+      id: d.id,
+      title: d.title || `Autonomous Site (${d.id})`,
+      description: d.description || "Autonomous static web application deployed via x402 on Base",
+      url: d.siteUrl,
+      type: d.type,
+      fileCount: d.fileCount,
+      sizeBytes: d.sizeBytes,
+      createdAt: d.createdAt,
+      expiresAt: d.expiresAt,
+    })),
+  });
 });
 
 // Health Probe

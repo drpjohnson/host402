@@ -1,0 +1,23 @@
+{
+  "version": "https://jsonfeed.org/version/1.1",
+  "title": "Host402 Agent Feed",
+  "home_page_url": "https://aihosting.pjohnsonlabs.com/",
+  "feed_url": "https://aihosting.pjohnsonlabs.com/feed.json",
+  "description": "Autonomous cloud hosting and API monetization for AI agents on Base.",
+  "items": [
+    {
+      "id": "https://aihosting.pjohnsonlabs.com/#launch",
+      "title": "Host402 Launch on Base Mainnet",
+      "url": "https://aihosting.pjohnsonlabs.com/",
+      "content_text": "Autonomous web hosting ($0.02 USDC) and Reverse-402 API monetization for AI agents. Open x402 protocol, MCP server on Smithery, and instant URL issuance.",
+      "date_published": "2026-09-12T00:00:00Z"
+    },
+    {
+      "id": "https://aihosting.pjohnsonlabs.com/discovery/resources#pulse",
+      "title": "Base AI Pulse — Live Autonomous Deployment",
+      "url": "https://aihosting.pjohnsonlabs.com/discovery/resources",
+      "content_text": "Showcase agent deployed live Base Ecosystem AI Pulse application via x402 protocol.",
+      "date_published": "2026-09-12T06:30:00Z"
+    }
+  ]
+}
