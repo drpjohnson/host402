@@ -14,9 +14,9 @@ export interface PlatformConfig {
   storageDir: string;
   dbPath: string;
   pricing: {
-    staticDeployUSDC: number; // in atomic units (6 decimals): 20000 = $0.02
-    apiDeployUSDC: number;    // 50000 = $0.05
-    renewalUSDC: number;      // 10000 = $0.01
+    staticDeployUSDC: number; // in atomic units (6 decimals): 1000000 = $1.00
+    apiDeployUSDC: number;    // 2000000 = $2.00
+    renewalUSDC: number;      // 500000 = $0.50
     platformFeePercent: number; // 5%
   };
   limits: {
@@ -25,6 +25,7 @@ export interface PlatformConfig {
     defaultTtlDays: number;    // 30 days
   };
   allowDevBypass: boolean;
+  showcaseAgentPrivateKey?: string;
 }
 
 const isProduction = process.env.NODE_ENV === "production";
@@ -46,9 +47,9 @@ export const config: PlatformConfig = {
   storageDir: path.resolve(process.env.STORAGE_DIR || "./storage/deployments"),
   dbPath: path.resolve(process.env.DB_PATH || "./storage/host402.json"),
   pricing: {
-    staticDeployUSDC: Number(process.env.PRICE_STATIC_USDC || 20000), // $0.02
-    apiDeployUSDC: Number(process.env.PRICE_API_USDC || 50000),       // $0.05
-    renewalUSDC: Number(process.env.PRICE_RENEW_USDC || 10000),       // $0.01
+    staticDeployUSDC: Number(process.env.PRICE_STATIC_USDC || 1000000), // $1.00 USDC
+    apiDeployUSDC: Number(process.env.PRICE_API_USDC || 2000000),       // $2.00 USDC
+    renewalUSDC: Number(process.env.PRICE_RENEW_USDC || 500000),       // $0.50 USDC
     platformFeePercent: 5, // 5% platform fee on monetized APIs
   },
   limits: {
@@ -56,5 +57,6 @@ export const config: PlatformConfig = {
     maxTotalSizeBytes: 25 * 1024 * 1024, // 25 MB
     defaultTtlDays: 30,
   },
-  allowDevBypass: process.env.ALLOW_DEV_BYPASS === "true" || !isProduction,
+  allowDevBypass: process.env.ALLOW_DEV_BYPASS === "true",
+  showcaseAgentPrivateKey: process.env.SHOWCASE_AGENT_PRIVATE_KEY,
 };

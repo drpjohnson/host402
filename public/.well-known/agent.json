@@ -14,8 +14,8 @@
       "pricing": {
         "network": "eip155:8453",
         "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
-        "amount": "20000",
-        "formatted": "$0.02 USDC",
+        "amount": "1000000",
+        "formatted": "$1.00 USDC",
         "period": "30 days"
       }
     },

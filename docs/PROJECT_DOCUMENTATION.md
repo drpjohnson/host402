@@ -111,7 +111,14 @@ graph TD
 * **`GET /api/stats`**:
   * Returns active deployment counts, total settled volume in USDC, network ID, and current x402 protocol status.
 * **`GET /api/transactions`**:
-  * Returns chronological real-time ledger of all service payments, settlements, and resource leases. Includes BaseScan transaction explorer links, payer wallet addresses, amounts in USDC, and corresponding deployed resource links.
+  * Returns chronological real-time ledger of all verified onchain service payments, settlements, and resource leases. Includes BaseScan transaction explorer links, payer wallet addresses, amounts in USDC, and corresponding deployed resource links.
+
+### 4.5. Onchain Pricing Schedule (Base Mainnet / Base Sepolia)
+* **Static Website Deployment**: `$1.00 USDC` (`1000000` atomic units) — 30-day lease with SSL and global CDN.
+* **Monetized API Gateway Registration**: `$2.00 USDC` (`2000000` atomic units) — Permanent proxy wrapper.
+* **Lease Extension Renewal**: `$0.50 USDC` (`500000` atomic units) — Adds 30 days to existing deployment lease.
+* **Platform Fee**: `5%` retained on monetized API gateway executions; `95%` routed directly to owner wallet.
+* **Operating Mode**: Strictly onchain with Base network (`eip155:8453`). Simulations are prohibited in production.
 
 ---
 

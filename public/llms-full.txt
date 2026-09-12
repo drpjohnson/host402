@@ -56,13 +56,13 @@ Content-Type: application/json
         "scheme": "exact",
         "network": "eip155:8453",
         "payTo": "0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A",
-        "amount": "20000",
+        "amount": "1000000",
         "asset": "0x833589fCD6eDb6E08f4c7C32D4f71b54bdA02913",
         "maxTimeoutSeconds": 300,
         "extra": {
           "name": "USD Coin",
           "version": "2",
-          "formattedPrice": "$0.0200 USDC"
+          "formattedPrice": "$1.00 USDC"
         }
       }
     ],

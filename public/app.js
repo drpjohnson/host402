@@ -226,7 +226,7 @@ async function loadShowcase() {
             <span style="font-size: 0.75rem; color: #38bdf8; font-family: monospace;">${item.id}</span>
           </div>
           <span style="background: rgba(56, 189, 248, 0.12); color: #38bdf8; padding: 0.2rem 0.6rem; border-radius: 6px; font-size: 0.75rem; font-weight: 600;">
-            $0.02 USDC
+            $1.00 USDC
           </span>
         </div>
         <div class="showcase-desc">${escapeHtml(item.description || "Autonomous web application")}</div>
@@ -267,7 +267,7 @@ async function loadTransactions() {
       tbody.innerHTML = `
         <tr>
           <td colspan="7" class="tx-loading-cell">
-            No transactions recorded yet. Deploy a website or call an API to generate onchain settlements!
+            No onchain transactions recorded yet. Waiting for incoming agent deployments on Base!
           </td>
         </tr>`;
       return;
@@ -287,12 +287,14 @@ async function loadTransactions() {
         ? `<a href="${tx.siteUrl}" target="_blank" class="tx-resource-link" title="${escapeHtml(tx.siteTitle || tx.deploymentId)}">${escapeHtml(tx.siteTitle || tx.deploymentId)} ↗</a>`
         : `<span class="text-muted font-mono">${escapeHtml(tx.deploymentId || '—')}</span>`;
 
+      const statusBadge = tx.explorerUrl
+        ? `<span class="tx-status-pill tx-settled"><span class="pill-dot"></span> Onchain Settled</span>`
+        : `<span class="tx-status-pill" style="background: rgba(168, 85, 247, 0.12); color: #c084fc; border: 1px solid rgba(168, 85, 247, 0.3);"><span class="pill-dot" style="background: #c084fc; box-shadow: 0 0 6px #c084fc;"></span> Sandbox</span>`;
+
       return `
         <tr>
           <td>
-            <span class="tx-status-pill tx-settled">
-              <span class="pill-dot"></span> Settled
-            </span>
+            ${statusBadge}
           </td>
           <td>
             <span class="${typeClass}">${escapeHtml(tx.typeLabel || tx.type || 'Deployment')}</span>

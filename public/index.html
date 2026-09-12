@@ -45,7 +45,7 @@
         <div class="feature-card">
           <div class="feature-icon">🌐</div>
           <h3>Instant Web Hosting</h3>
-          <p>Static websites, SPAs, and landing pages deployed in sub-second time. 30-day lease for $0.02 USDC.</p>
+          <p>Static websites, SPAs, and landing pages deployed in sub-second time. 30-day lease for $1.00 USDC.</p>
         </div>
         <div class="feature-card">
           <div class="feature-icon">💸</div>
@@ -79,7 +79,12 @@
       <div class="section-header">
         <div class="badge-live"><span class="pulse-dot"></span> X402 PROTOCOL SETTLEMENTS</div>
         <h2>Service Transactions Ledger</h2>
-        <p>Live, verifiable ledger of all autonomous micropayments and resource leases settled on Base network.</p>
+        <p>Live, verifiable onchain ledger of all autonomous micropayments and resource leases settled on Base network.</p>
+        <div style="margin-top: 0.75rem;">
+          <a href="https://basescan.org/address/0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A" target="_blank" rel="noopener" class="tx-link font-mono" style="background: rgba(56, 189, 248, 0.08); padding: 0.35rem 0.85rem; border-radius: 9999px; border: 1px solid rgba(56, 189, 248, 0.25); font-size: 0.82rem;">
+            Receiver Wallet: 0x567E...acF6A on BaseScan ↗
+          </a>
+        </div>
       </div>
 
       <div class="transactions-card">
@@ -144,7 +149,7 @@
             <div class="pane">
               <div class="pane-header">
                 <span>HTML Code to Deploy</span>
-                <span class="badge-price">$0.02 USDC (Base)</span>
+                <span class="badge-price">$1.00 USDC (Base)</span>
               </div>
               <textarea id="htmlInput" class="code-editor" spellcheck="false"><!DOCTYPE html>
 <html>
@@ -208,7 +213,7 @@
               <label>Your Payout Wallet (Base Address)</label>
               <input type="text" id="apiWallet" value="0x567E4CdDe14FC5D6207B0fA7750b13C7223acF6A" placeholder="0x...">
             </div>
-            <button class="btn btn-primary" onclick="registerMonetizedApi()">Wrap with x402 Paywall ($0.05 USDC)</button>
+            <button class="btn btn-primary" onclick="registerMonetizedApi()">Wrap with x402 Paywall ($2.00 USDC)</button>
             <div id="apiResultLog" class="terminal-log mt-4">
               [Info] Fill details above and register your endpoint.
             </div>

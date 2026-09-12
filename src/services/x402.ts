@@ -21,6 +21,31 @@ export interface PaymentRequiredPayload {
   description: string;
 }
 
+import { createPublicClient, http, decodeEventLog } from "viem";
+import { base, baseSepolia } from "viem/chains";
+
+const isMainnet = config.network.includes("8453") && !config.network.includes("84532");
+const chain = isMainnet ? base : baseSepolia;
+const rpcUrl = isMainnet ? "https://mainnet.base.org" : "https://sepolia.base.org";
+
+const publicClient = createPublicClient({
+  chain,
+  transport: http(rpcUrl),
+});
+
+const transferEventAbi = [
+  {
+    anonymous: false,
+    inputs: [
+      { indexed: true, name: "from", type: "address" },
+      { indexed: true, name: "to", type: "address" },
+      { indexed: false, name: "value", type: "uint256" },
+    ],
+    name: "Transfer",
+    type: "event",
+  },
+] as const;
+
 export class X402Service {
   private facilitatorClient: HTTPFacilitatorClient;
   public resourceServer: x402ResourceServer;
@@ -55,7 +80,7 @@ export class X402Service {
           extra: {
             name: "USD Coin",
             version: "2",
-            formattedPrice: `$${(amountUnits / 1_000_000).toFixed(4)} USDC`,
+            formattedPrice: `$${(amountUnits / 1_000_000).toFixed(2)} USDC`,
           },
         },
       ],
@@ -95,28 +120,109 @@ export class X402Service {
       return { success: false, error: "Malformed payment signature header" };
     }
 
-    // Dev / Test simulation mode:
-    // If running in development and dev bypass is enabled or header has simulation tag
-    const isDevSimulated =
-      config.allowDevBypass &&
-      (payload.simulation === true ||
-        payload.testnet === true ||
-        payload.payer === "mock-agent" ||
-        String(paymentHeader).startsWith("sim_") ||
-        String(paymentHeader).startsWith("test_"));
+    const amount = Number(requirement.accepts[0].amount);
+    const paymentType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
+      requirement.resource?.includes("/v1/deploy/static") || amount === config.pricing.staticDeployUSDC
+        ? "deploy_static"
+        : requirement.resource?.includes("/v1/deploy/api") || amount === config.pricing.apiDeployUSDC
+        ? "deploy_api"
+        : requirement.resource?.includes("/renew") || amount === config.pricing.renewalUSDC
+        ? "renew"
+        : "api_call";
 
-    if (isDevSimulated) {
+    // 1. Direct On-Chain Transaction Verification (via Base RPC)
+    const rawTxHash = (payload.txHash as string) || (payload.transactionHash as string);
+    if (typeof rawTxHash === "string" && /^0x[a-fA-F0-9]{64}$/.test(rawTxHash)) {
+      const hash = rawTxHash as `0x${string}`;
+
+      // Replay attack prevention
+      const existing = db.getAllPayments().find((p) => p.txHash?.toLowerCase() === hash.toLowerCase());
+      if (existing) {
+        return { success: false, error: "Transaction hash has already been used and settled." };
+      }
+
+      try {
+        const receipt = await publicClient.getTransactionReceipt({ hash });
+        if (receipt.status !== "success") {
+          return { success: false, error: "Transaction reverted or failed on Base network." };
+        }
+
+        const expectedAsset = requirement.accepts[0].asset.toLowerCase();
+        const expectedPayTo = requirement.accepts[0].payTo.toLowerCase();
+        const expectedAmount = BigInt(requirement.accepts[0].amount);
+
+        let validTransfer = false;
+        let payer = receipt.from;
+
+        for (const log of receipt.logs) {
+          if (log.address.toLowerCase() === expectedAsset) {
+            try {
+              const decoded = decodeEventLog({
+                abi: transferEventAbi,
+                data: log.data,
+                topics: log.topics,
+              });
+              if (
+                decoded.eventName === "Transfer" &&
+                decoded.args.to.toLowerCase() === expectedPayTo &&
+                decoded.args.value >= expectedAmount
+              ) {
+                validTransfer = true;
+                payer = decoded.args.from;
+                break;
+              }
+            } catch {
+              // Not a standard Transfer log, skip
+            }
+          }
+        }
+
+        if (!validTransfer) {
+          return {
+            success: false,
+            error: `Onchain transaction does not contain a valid Transfer of >= ${expectedAmount} USDC to ${requirement.accepts[0].payTo}`,
+          };
+        }
+
+        const record: PaymentRecord = {
+          id: `pay_${crypto.randomUUID().slice(0, 8)}`,
+          deploymentId,
+          txHash: hash,
+          payerWallet: payer,
+          recipientWallet: requirement.accepts[0].payTo,
+          asset: requirement.accepts[0].asset,
+          amount,
+          scheme: "exact",
+          type: paymentType,
+          status: "settled",
+          createdAt: new Date().toISOString(),
+        };
+
+        db.savePayment(record);
+        return { success: true, paymentRecord: record };
+      } catch (err: any) {
+        return { success: false, error: `Base RPC receipt verification failed: ${err.message}` };
+      }
+    }
+
+    // 2. Reject simulation if dev bypass is disabled
+    const isSimulated =
+      payload.simulation === true ||
+      payload.testnet === true ||
+      payload.payer === "mock-agent" ||
+      String(paymentHeader).startsWith("sim_") ||
+      String(paymentHeader).startsWith("test_");
+
+    if (isSimulated && !config.allowDevBypass) {
+      return {
+        success: false,
+        error: "Simulated payments are disabled. Host402 operates strictly onchain with Base network (eip155:8453).",
+      };
+    }
+
+    if (isSimulated && config.allowDevBypass) {
       const payerWallet = (payload.payerWallet as string) || "0xAgentDev0000000000000000000000000000001";
       const txHash = `0xsim_${crypto.randomBytes(28).toString("hex")}`;
-      const amount = Number(requirement.accepts[0].amount);
-      const paymentType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
-        requirement.resource?.includes("/v1/deploy/static") || amount === 20000
-          ? "deploy_static"
-          : requirement.resource?.includes("/v1/deploy/api") || amount === 50000
-          ? "deploy_api"
-          : requirement.resource?.includes("/renew") || amount === 10000
-          ? "renew"
-          : "api_call";
 
       const record: PaymentRecord = {
         id: `pay_${crypto.randomUUID().slice(0, 8)}`,
@@ -136,21 +242,11 @@ export class X402Service {
       return { success: true, paymentRecord: record };
     }
 
-    // Real On-Chain / Facilitator verification
+    // 3. EIP-712 Facilitator Verification
     try {
       const settleResult = await this.facilitatorClient.settle(payload as any, requirement.accepts[0] as any);
       const payerWallet = (settleResult as any)?.payer || (payload as any)?.payer || "0xPayerUnknown";
       const txHash = (settleResult as any)?.txHash || `0x${crypto.randomBytes(32).toString("hex")}`;
-      const amount = Number(requirement.accepts[0].amount);
-
-      const paymentType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
-        requirement.resource?.includes("/v1/deploy/static") || amount === 20000
-          ? "deploy_static"
-          : requirement.resource?.includes("/v1/deploy/api") || amount === 50000
-          ? "deploy_api"
-          : requirement.resource?.includes("/renew") || amount === 10000
-          ? "renew"
-          : "api_call";
 
       const record: PaymentRecord = {
         id: `pay_${crypto.randomUUID().slice(0, 8)}`,
@@ -169,20 +265,10 @@ export class X402Service {
       db.savePayment(record);
       return { success: true, paymentRecord: record };
     } catch (err: any) {
-      // Fallback in case facilitator is offline in test mode
       if (config.allowDevBypass) {
         console.warn("Facilitator call failed in dev mode, falling back to simulated settlement:", err.message);
         const payerWallet = (payload.payerWallet as string) || (payload.from as string) || "0xAgentAutoWallet";
         const txHash = `0xfallback_${crypto.randomBytes(28).toString("hex")}`;
-        const amount = Number(requirement.accepts[0].amount);
-        const fallbackType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
-          requirement.resource?.includes("/v1/deploy/static") || amount === 20000
-            ? "deploy_static"
-            : requirement.resource?.includes("/v1/deploy/api") || amount === 50000
-            ? "deploy_api"
-            : requirement.resource?.includes("/renew") || amount === 10000
-            ? "renew"
-            : "api_call";
 
         const record: PaymentRecord = {
           id: `pay_${crypto.randomUUID().slice(0, 8)}`,
@@ -193,7 +279,7 @@ export class X402Service {
           asset: requirement.accepts[0].asset,
           amount,
           scheme: "exact",
-          type: fallbackType,
+          type: paymentType,
           status: "settled",
           createdAt: new Date().toISOString(),
         };
@@ -211,3 +297,4 @@ export class X402Service {
 }
 
 export const x402 = new X402Service();
+

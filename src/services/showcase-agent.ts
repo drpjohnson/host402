@@ -6,6 +6,18 @@
  */
 
 import { config } from "../config.js";
+import { createWalletClient, createPublicClient, http, erc20Abi, formatUnits } from "viem";
+import { privateKeyToAccount } from "viem/accounts";
+import { base, baseSepolia } from "viem/chains";
+
+const isMainnet = config.network.includes("8453") && !config.network.includes("84532");
+const chain = isMainnet ? base : baseSepolia;
+const rpcUrl = isMainnet ? "https://mainnet.base.org" : "https://sepolia.base.org";
+
+const publicClient = createPublicClient({
+  chain,
+  transport: http(rpcUrl),
+});
 
 interface ShowcaseTemplate {
   title: string;
@@ -18,6 +30,16 @@ export class ShowcaseAgent {
 
   constructor(baseUrl: string = config.baseUrl) {
     this.baseUrl = baseUrl.replace(/\/$/, "");
+  }
+
+  getAgentAddress(): string | null {
+    if (!config.showcaseAgentPrivateKey) return null;
+    try {
+      const account = privateKeyToAccount(config.showcaseAgentPrivateKey as `0x${string}`);
+      return account.address;
+    } catch {
+      return null;
+    }
   }
 
   private generateBasePulseApp(): ShowcaseTemplate {
@@ -253,14 +275,74 @@ export class ShowcaseAgent {
         return { success: false, error: `Expected 402, received ${initRes.status}` };
       }
 
-      // Step 2: Sign x402 payment
-      const simulatedPayment = {
-        simulation: true,
-        payerWallet: "0xAutonomousShowcaseAgent8453",
-        signature: "0x_showcase_agent_sig",
-        timestamp: Date.now(),
-      };
-      const paymentHeader = Buffer.from(JSON.stringify(simulatedPayment)).toString("base64");
+      // Step 2: Handle onchain x402 payment
+      let paymentHeader = "";
+
+      if (config.showcaseAgentPrivateKey) {
+        try {
+          const account = privateKeyToAccount(config.showcaseAgentPrivateKey as `0x${string}`);
+          const walletClient = createWalletClient({
+            account,
+            chain,
+            transport: http(rpcUrl),
+          });
+
+          const ethBalance = await publicClient.getBalance({ address: account.address });
+          const usdcBalance = await publicClient.readContract({
+            address: config.usdcAsset as `0x${string}`,
+            abi: erc20Abi,
+            functionName: "balanceOf",
+            args: [account.address],
+          });
+
+          const requiredUnits = BigInt(config.pricing.staticDeployUSDC);
+
+          if (ethBalance > 0n && usdcBalance >= requiredUnits) {
+            console.log(`[ShowcaseAgent] Sending onchain transfer of ${formatUnits(requiredUnits, 6)} USDC to ${config.payToAddress} on Base...`);
+            const hash = await walletClient.writeContract({
+              address: config.usdcAsset as `0x${string}`,
+              abi: erc20Abi,
+              functionName: "transfer",
+              args: [config.payToAddress as `0x${string}`, requiredUnits],
+            });
+            console.log(`[ShowcaseAgent] Tx submitted: ${hash}. Waiting for confirmation...`);
+            await publicClient.waitForTransactionReceipt({ hash });
+            console.log(`[ShowcaseAgent] Confirmed on Base: https://basescan.org/tx/${hash}`);
+
+            paymentHeader = Buffer.from(JSON.stringify({ txHash: hash, payerWallet: account.address })).toString("base64");
+          } else {
+            console.warn(
+              `[ShowcaseAgent] Wallet ${account.address} requires funds on Base! ETH: ${formatUnits(ethBalance, 18)}, USDC: ${formatUnits(usdcBalance, 6)}. Needed: ${formatUnits(requiredUnits, 6)} USDC.`
+            );
+            if (!config.allowDevBypass) {
+              return {
+                success: false,
+                error: `Showcase Agent wallet ${account.address} is unfunded on Base. Fund it with ETH & USDC to execute onchain deployments.`,
+              };
+            }
+          }
+        } catch (err: any) {
+          console.error("[ShowcaseAgent] Onchain transfer failed:", err.message);
+          if (!config.allowDevBypass) {
+            return { success: false, error: `Onchain transaction failed: ${err.message}` };
+          }
+        }
+      }
+
+      // If dev bypass is explicitly allowed (local test suite only)
+      if (!paymentHeader && config.allowDevBypass) {
+        const simulatedPayment = {
+          simulation: true,
+          payerWallet: "0xAutonomousShowcaseAgent8453",
+          signature: "0x_showcase_agent_sig",
+          timestamp: Date.now(),
+        };
+        paymentHeader = Buffer.from(JSON.stringify(simulatedPayment)).toString("base64");
+      }
+
+      if (!paymentHeader) {
+        return { success: false, error: "No valid payment generated. Agent wallet is not funded and dev bypass is disabled." };
+      }
 
       // Step 3: Resend with payment
       const deployRes = await fetch(`${this.baseUrl}/v1/deploy/static`, {
