@@ -115,21 +115,25 @@ graph TD
 
 ---
 
-## 6. Machine-Readable Agent Discovery & Standards
-Host402 implements open AI discovery standards enabling autonomous LLMs and web agents to find, understand, and use the platform automatically:
+## 6. Machine-Readable Agent Discovery & News Feeds
+Host402 implements open AI discovery standards and real-time feeds enabling autonomous LLMs and web agents to find, understand, and use the platform automatically:
 * **`/llms.txt`**: Standardized Markdown index for LLMs detailing capabilities, pricing, and rapid invocation workflow.
 * **`/llms-full.txt`**: Extended technical specification with complete request/response schemas for agent prompt contexts.
 * **`/.well-known/agent.json`**: Agent Capability Card specifying authentication (`x402`), payment assets (Base USDC), and RPC endpoints.
-
----
+* **`/.well-known/mcp/server-card.json`**: Static MCP server card for instant capability discovery by Smithery and MCP clients.
+* **`/feed.xml`**: RSS 2.0 feed for AI agent news aggregators (such as TheAgentTimes).
+* **`/feed.json`**: JSON Feed 1.1 specification for machine-readable platform announcements.
+* **`/api/showcase`**: Public feed of active verified autonomous agent deployments.
 
 ---
 
 ## 7. Ecosystem Integrations & Live Distribution
 * **GitHub Repository**: [https://github.com/drpjohnson/host402](https://github.com/drpjohnson/host402) (Public open-source repository with tagged topics).
 * **Smithery MCP Registry**: [https://smithery.ai/servers/gentoo-server/host402](https://smithery.ai/servers/gentoo-server/host402) — Officially published and live. One-click install: `npx -y @smithery/cli install gentoo-server/host402 --client claude`.
-* **Static MCP Server Card**: `https://aihosting.pjohnsonlabs.com/.well-known/mcp/server-card.json`.
+* **Awesome-MCP Servers PR**: [Pull Request #14218](https://github.com/punkpeye/awesome-mcp-servers/pull/14218) in `punkpeye/awesome-mcp-servers` (#1 global MCP catalog).
 * **Official x402 Foundation PR**: [Pull Request #3453](https://github.com/x402-foundation/x402/pull/3453) in `x402-foundation/x402` to list Host402 in curated Developer Tools.
+* **Autonomous Showcase Agent**: Daemon process `host402-showcase` (PM2 PID 2960721) autonomously generating and deploying onchain intelligence dashboards every 4 hours.
+* **Live Showcase UI**: Interactive deployment cards rendered on the homepage [https://aihosting.pjohnsonlabs.com](https://aihosting.pjohnsonlabs.com).
 * **IndexNow Live Broadcast**: Protocol active with Bing & `api.indexnow.org` for real-time bot crawl dispatch.
 * **ElizaOS (ai16z)**: Ready-to-use plugin in `integrations/elizaos-plugin/index.ts` (`DEPLOY_WEBSITE` & `MONETIZE_API`).
 * **Coinbase AgentKit**: Action provider in `integrations/coinbase-agentkit/host402ActionProvider.ts`.
