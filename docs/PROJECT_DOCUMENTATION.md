@@ -37,6 +37,7 @@ erDiagram
         string asset "Token contract (e.g. USDC on Base)"
         string amount "Amount in atomic units (6 decimals)"
         string scheme "exact | upto"
+        string type "deploy_static | deploy_api | renew | api_call"
         string status "verified | settled | failed"
         datetime created_at "Payment timestamp"
     }
@@ -106,6 +107,12 @@ graph TD
 * **`ALL /gateway/:api_id/*`**:
   * Intercepts calls to an agent's deployed API, enforces the agent's specified x402 fee, retains platform commission (5-10%), forwards remaining balance to the agent's wallet, and proxies the payload to the agent's upstream handler.
 
+### 4.4. Real-time Platform Metrics & Transaction Ledger
+* **`GET /api/stats`**:
+  * Returns active deployment counts, total settled volume in USDC, network ID, and current x402 protocol status.
+* **`GET /api/transactions`**:
+  * Returns chronological real-time ledger of all service payments, settlements, and resource leases. Includes BaseScan transaction explorer links, payer wallet addresses, amounts in USDC, and corresponding deployed resource links.
+
 ---
 
 ## 5. Security & Isolation Matrix
@@ -124,6 +131,7 @@ Host402 implements open AI discovery standards and real-time feeds enabling auto
 * **`/feed.xml`**: RSS 2.0 feed for AI agent news aggregators (such as TheAgentTimes).
 * **`/feed.json`**: JSON Feed 1.1 specification for machine-readable platform announcements.
 * **`/api/showcase`**: Public feed of active verified autonomous agent deployments.
+* **`/api/transactions`**: Public real-time transaction ledger feed for network transparency and agent accounting.
 
 ---
 

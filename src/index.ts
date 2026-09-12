@@ -82,6 +82,47 @@ app.get(["/api/recent", "/api/showcase"], (req: Request, res: Response) => {
   });
 });
 
+app.get("/api/transactions", (req: Request, res: Response) => {
+  const payments = db.getAllPayments().slice(0, 30);
+  const isBaseMainnet = config.network.includes("8453") && !config.network.includes("84532");
+  const explorerBase = isBaseMainnet ? "https://basescan.org" : "https://sepolia.basescan.org";
+
+  res.json({
+    success: true,
+    count: payments.length,
+    totalVolumeUSDC: (payments.reduce((sum, p) => sum + (p.amount || 0), 0) / 1_000_000).toFixed(4),
+    items: payments.map((p) => {
+      const dep = db.getDeployment(p.deploymentId);
+      const isSim = p.txHash?.startsWith("0xsim_") || p.txHash?.startsWith("0xfallback_");
+
+      let typeLabel = "Web Hosting Deploy";
+      if (p.type === "deploy_api" || p.amount === 50000) typeLabel = "API Paywall Registration";
+      else if (p.type === "renew" || p.amount === 10000) typeLabel = "Lease Renewal";
+      else if (p.type === "api_call") typeLabel = "Agent API Call";
+
+      return {
+        id: p.id,
+        deploymentId: p.deploymentId,
+        txHash: p.txHash,
+        shortTxHash: p.txHash ? `${p.txHash.slice(0, 10)}...${p.txHash.slice(-6)}` : "0x...",
+        explorerUrl: isSim ? null : `${explorerBase}/tx/${p.txHash}`,
+        payerWallet: p.payerWallet,
+        shortPayer: p.payerWallet ? `${p.payerWallet.slice(0, 6)}...${p.payerWallet.slice(-4)}` : "0x...",
+        recipientWallet: p.recipientWallet,
+        amountAtomic: p.amount,
+        amountUSDC: `$${(p.amount / 1_000_000).toFixed(4)} USDC`,
+        scheme: p.scheme,
+        type: p.type || "deploy_static",
+        typeLabel,
+        status: p.status,
+        siteUrl: dep?.siteUrl || null,
+        siteTitle: dep?.title || null,
+        createdAt: p.createdAt,
+      };
+    }),
+  });
+});
+
 // Health Probe
 app.get("/health", (req: Request, res: Response) => {
   res.json({ status: "healthy", version: "1.0.0", x402Version: 2, timestamp: new Date().toISOString() });

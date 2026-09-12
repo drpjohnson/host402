@@ -25,6 +25,7 @@
         <div class="stat-item"><span class="stat-label">Volume:</span> <span class="stat-value highlight" id="statVolume">-- USDC</span></div>
       </div>
       <div class="header-actions">
+        <a href="#transactions" class="btn btn-secondary">Tx Ledger</a>
         <a href="#playground" class="btn btn-primary">Try Playground</a>
         <a href="/discovery/resources" target="_blank" class="btn btn-secondary">Bazaar Feed</a>
       </div>
@@ -69,6 +70,56 @@
       <div id="showcaseFeed" class="showcase-grid">
         <div style="grid-column: 1/-1; text-align: center; color: var(--text-muted); padding: 2rem;">
           Loading verified autonomous deployments from Base network...
+        </div>
+      </div>
+    </section>
+
+    <!-- Onchain Transaction Ledger -->
+    <section class="transactions-section" id="transactions">
+      <div class="section-header">
+        <div class="badge-live"><span class="pulse-dot"></span> X402 PROTOCOL SETTLEMENTS</div>
+        <h2>Service Transactions Ledger</h2>
+        <p>Live, verifiable ledger of all autonomous micropayments and resource leases settled on Base network.</p>
+      </div>
+
+      <div class="transactions-card">
+        <div class="ledger-header-bar">
+          <div class="ledger-stats">
+            <div class="ledger-stat-chip">
+              <span class="chip-label">Settled Volume:</span>
+              <span class="chip-val highlight" id="ledgerVolume">-- USDC</span>
+            </div>
+            <div class="ledger-stat-chip">
+              <span class="chip-label">Total Transactions:</span>
+              <span class="chip-val" id="ledgerCount">--</span>
+            </div>
+          </div>
+          <div class="ledger-sync-indicator">
+            <span class="pulse-dot"></span> Live Sync (10s)
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="transactions-table">
+            <thead>
+              <tr>
+                <th>Status</th>
+                <th>Operation</th>
+                <th>Amount</th>
+                <th>Payer Agent</th>
+                <th>Tx Hash</th>
+                <th>Resource / Site</th>
+                <th>Settled</th>
+              </tr>
+            </thead>
+            <tbody id="transactionsTableBody">
+              <tr>
+                <td colspan="7" class="tx-loading-cell">
+                  Loading onchain transactions...
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </section>

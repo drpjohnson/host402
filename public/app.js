@@ -122,6 +122,7 @@ async function runDeployFlow() {
         resultBox.classList.remove('hidden');
 
         loadStats();
+        loadTransactions();
       } else {
         const errData = await res2.json();
         appendLog("✖ Settlement error: " + JSON.stringify(errData));
@@ -169,6 +170,7 @@ async function registerMonetizedApi() {
       logEl.textContent += `\nTest calling this API without payment to see the 402 challenge:\n`;
       logEl.textContent += `  curl -i ${data.gatewayUrl}`;
       loadStats();
+      loadTransactions();
     } else {
       logEl.textContent += `✖ Error: ${data.message || JSON.stringify(data)}`;
     }
@@ -244,8 +246,85 @@ async function loadShowcase() {
   }
 }
 
+async function loadTransactions() {
+  const tbody = document.getElementById('transactionsTableBody');
+  const countEl = document.getElementById('ledgerCount');
+  const volumeEl = document.getElementById('ledgerVolume');
+  if (!tbody) return;
+
+  try {
+    const res = await fetch('/api/transactions');
+    if (!res.ok) return;
+    const data = await res.json();
+    const items = data.items || [];
+
+    if (countEl) countEl.textContent = `${items.length} TXs`;
+    if (volumeEl && data.totalVolumeUSDC !== undefined) {
+      volumeEl.textContent = `${data.totalVolumeUSDC} USDC`;
+    }
+
+    if (items.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" class="tx-loading-cell">
+            No transactions recorded yet. Deploy a website or call an API to generate onchain settlements!
+          </td>
+        </tr>`;
+      return;
+    }
+
+    tbody.innerHTML = items.map(tx => {
+      let typeClass = 'tx-type-badge';
+      if (tx.type === 'deploy_api') typeClass += ' tx-type-api';
+      else if (tx.type === 'renew') typeClass += ' tx-type-renew';
+      else if (tx.type === 'api_call') typeClass += ' tx-type-call';
+
+      const hashDisplay = tx.explorerUrl
+        ? `<a href="${tx.explorerUrl}" target="_blank" rel="noopener" class="tx-link font-mono" title="${escapeHtml(tx.txHash || '')}">${escapeHtml(tx.shortTxHash)} ↗</a>`
+        : `<span class="tx-hash-sim font-mono" title="${escapeHtml(tx.txHash || '')}">${escapeHtml(tx.shortTxHash)}</span>`;
+
+      const resourceDisplay = tx.siteUrl
+        ? `<a href="${tx.siteUrl}" target="_blank" class="tx-resource-link" title="${escapeHtml(tx.siteTitle || tx.deploymentId)}">${escapeHtml(tx.siteTitle || tx.deploymentId)} ↗</a>`
+        : `<span class="text-muted font-mono">${escapeHtml(tx.deploymentId || '—')}</span>`;
+
+      return `
+        <tr>
+          <td>
+            <span class="tx-status-pill tx-settled">
+              <span class="pill-dot"></span> Settled
+            </span>
+          </td>
+          <td>
+            <span class="${typeClass}">${escapeHtml(tx.typeLabel || tx.type || 'Deployment')}</span>
+          </td>
+          <td>
+            <span class="tx-amount font-mono">${escapeHtml(tx.amountUSDC || '$0.00 USDC')}</span>
+          </td>
+          <td>
+            <span class="font-mono text-payer" title="${escapeHtml(tx.payerWallet || '')}">${escapeHtml(tx.shortPayer || '0x...')}</span>
+          </td>
+          <td>
+            ${hashDisplay}
+          </td>
+          <td>
+            ${resourceDisplay}
+          </td>
+          <td>
+            <span class="tx-time" title="${escapeHtml(tx.createdAt || '')}">${timeAgo(tx.createdAt)}</span>
+          </td>
+        </tr>
+      `;
+    }).join('');
+  } catch (err) {
+    console.warn("Failed to load transactions:", err);
+  }
+}
+
 // Initial load
 loadStats();
 loadShowcase();
+loadTransactions();
 setInterval(loadStats, 10000);
 setInterval(loadShowcase, 15000);
+setInterval(loadTransactions, 10000);
+

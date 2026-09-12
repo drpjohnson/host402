@@ -27,6 +27,7 @@ export interface PaymentRecord {
   asset: string;
   amount: number;
   scheme: string;
+  type?: "deploy_static" | "deploy_api" | "renew" | "api_call";
   status: "verified" | "settled" | "failed";
   createdAt: string;
 }
@@ -144,7 +145,9 @@ class Database {
   }
 
   getAllPayments(): PaymentRecord[] {
-    return Object.values(this.data.payments);
+    return Object.values(this.data.payments).sort(
+      (a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+    );
   }
 
   // API Endpoint operations

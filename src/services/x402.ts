@@ -109,6 +109,14 @@ export class X402Service {
       const payerWallet = (payload.payerWallet as string) || "0xAgentDev0000000000000000000000000000001";
       const txHash = `0xsim_${crypto.randomBytes(28).toString("hex")}`;
       const amount = Number(requirement.accepts[0].amount);
+      const paymentType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
+        requirement.resource?.includes("/v1/deploy/static") || amount === 20000
+          ? "deploy_static"
+          : requirement.resource?.includes("/v1/deploy/api") || amount === 50000
+          ? "deploy_api"
+          : requirement.resource?.includes("/renew") || amount === 10000
+          ? "renew"
+          : "api_call";
 
       const record: PaymentRecord = {
         id: `pay_${crypto.randomUUID().slice(0, 8)}`,
@@ -119,6 +127,7 @@ export class X402Service {
         asset: requirement.accepts[0].asset,
         amount,
         scheme: "exact",
+        type: paymentType,
         status: "settled",
         createdAt: new Date().toISOString(),
       };
@@ -134,6 +143,15 @@ export class X402Service {
       const txHash = (settleResult as any)?.txHash || `0x${crypto.randomBytes(32).toString("hex")}`;
       const amount = Number(requirement.accepts[0].amount);
 
+      const paymentType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
+        requirement.resource?.includes("/v1/deploy/static") || amount === 20000
+          ? "deploy_static"
+          : requirement.resource?.includes("/v1/deploy/api") || amount === 50000
+          ? "deploy_api"
+          : requirement.resource?.includes("/renew") || amount === 10000
+          ? "renew"
+          : "api_call";
+
       const record: PaymentRecord = {
         id: `pay_${crypto.randomUUID().slice(0, 8)}`,
         deploymentId,
@@ -143,6 +161,7 @@ export class X402Service {
         asset: requirement.accepts[0].asset,
         amount,
         scheme: "exact",
+        type: paymentType,
         status: "settled",
         createdAt: new Date().toISOString(),
       };
@@ -156,6 +175,14 @@ export class X402Service {
         const payerWallet = (payload.payerWallet as string) || (payload.from as string) || "0xAgentAutoWallet";
         const txHash = `0xfallback_${crypto.randomBytes(28).toString("hex")}`;
         const amount = Number(requirement.accepts[0].amount);
+        const fallbackType: "deploy_static" | "deploy_api" | "renew" | "api_call" =
+          requirement.resource?.includes("/v1/deploy/static") || amount === 20000
+            ? "deploy_static"
+            : requirement.resource?.includes("/v1/deploy/api") || amount === 50000
+            ? "deploy_api"
+            : requirement.resource?.includes("/renew") || amount === 10000
+            ? "renew"
+            : "api_call";
 
         const record: PaymentRecord = {
           id: `pay_${crypto.randomUUID().slice(0, 8)}`,
@@ -166,6 +193,7 @@ export class X402Service {
           asset: requirement.accepts[0].asset,
           amount,
           scheme: "exact",
+          type: fallbackType,
           status: "settled",
           createdAt: new Date().toISOString(),
         };
