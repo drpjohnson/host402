@@ -153,3 +153,14 @@ Host402 implements open AI discovery standards and real-time feeds enabling auto
 * **ElizaOS (ai16z)**: Ready-to-use plugin in `integrations/elizaos-plugin/index.ts` (`DEPLOY_WEBSITE` & `MONETIZE_API`).
 * **Coinbase AgentKit**: Action provider in `integrations/coinbase-agentkit/host402ActionProvider.ts`.
 * **Social Launch Kit**: Full announcement threads in `marketing/launch-announcement.md`.
+
+---
+
+## 8. Deployment Architecture & Local Skill (`deploy-aihosting`)
+* **Local Skill Path**: `.agents/skills/deploy-aihosting/SKILL.md` (written strictly in English).
+* **Automated Script**: `deploy/deploy.ps1` — automated end-to-end deployment script.
+* **PM2 Ecosystem Configuration**: `deploy/ecosystem.config.cjs` — manages `aihosting-platform` (port 4020) and `host402-showcase` with auto-restart and memory limits.
+* **Production Nginx Config**: `deploy/aihosting.pjohnsonlabs.com.conf` (and `scripts/nginx-aihosting.conf`).
+* **Mandatory GitHub Synchronization**: All commits must be pushed to [https://github.com/drpjohnson/host402](https://github.com/drpjohnson/host402) (`origin/master`).
+* **Commit Requirement**: Informative Conventional Commits reflecting actual work (e.g., `feat(...)`, `fix(...)`, `docs(...)`). Generic messages are prohibited.
+
